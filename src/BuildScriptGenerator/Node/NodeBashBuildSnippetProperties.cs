@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Microsoft.Oryx.BuildScriptGenerator.Node
 {
     /// <summary>
@@ -59,5 +61,16 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
         public string LageRunBuildCommand { get; set; }
 
         public string CustomBuildCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets a list of properties for the build. Those properties are stored in a
+        /// manifest file that can be used when running the app.
+        /// </summary>
+        public IDictionary<string, string> NodeBuildProperties { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the manifest file.
+        /// </summary>
+        public string NodeManifestFileName { get; set; }
     }
 }

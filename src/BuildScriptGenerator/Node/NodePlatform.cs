@@ -154,10 +154,12 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
             }
 
             var manifestFileProperties = new Dictionary<string, string>();
+            var nodeCommandManifestFileProperties = new Dictionary<string, string>();
 
             // Write the platform name and version to the manifest file
             manifestFileProperties[ManifestFilePropertyKeys.NodeVersion] = nodePlatformDetectorResult.PlatformVersion;
-
+            nodeCommandManifestFileProperties[ManifestFilePropertyKeys.NodeVersion] = nodePlatformDetectorResult.PlatformVersion;
+            
             var packageJson = GetPackageJsonObject(ctx.SourceRepo, _logger);
             string runBuildCommand = null;
             string runBuildAzureCommand = null;
@@ -194,6 +196,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
                 {
                     packageInstallCommand = NodeConstants.YarnPackageInstallCommand;
                 }
+
             }
             else
             {
@@ -226,6 +229,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
                         packageInstallerVersionCommand = NodeConstants.NpmVersionCommand;
                         installLernaCommand = NodeConstants.InstallLernaCommandNpm;
                     }
+                    
                 }
 
                 // If a 'lage.config.js' file exits, run build using lage specifc commands.
@@ -344,7 +348,24 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
                     manifestFileProperties[$"{PackageDirectoryPropertyKey}"] = packageDir;
                 }
             }
+            
+                        
+        
+            nodeCommandManifestFileProperties[nameof(packageManagerCmd)] = packageManagerCmd;
+            nodeCommandManifestFileProperties[nameof(packageInstallerVersionCommand)] = packageInstallerVersionCommand;
+            nodeCommandManifestFileProperties[nameof(packageInstallCommand)] = packageInstallCommand;
+            nodeCommandManifestFileProperties["enableNodeMonorepoBuild"] = _nodeScriptGeneratorOptions.EnableNodeMonorepoBuild.ToString();
+            nodeCommandManifestFileProperties[nameof(runBuildLernaCommand)] = runBuildLernaCommand;
+            nodeCommandManifestFileProperties[nameof(installLernaCommand)] = installLernaCommand;
 
+            nodeCommandManifestFileProperties["packageRegistryUrl"] = customRegistryUrl;
+            nodeCommandManifestFileProperties["npmRunBuildCommand"] = runBuildCommand;
+            nodeCommandManifestFileProperties["lageRunBuildCommand"] = runBuildLageCommand;
+            nodeCommandManifestFileProperties["npmRunBuildAzureCommand"] = runBuildAzureCommand;
+            
+            nodeCommandManifestFileProperties["customBuildCommand"] = _nodeScriptGeneratorOptions.CustomBuildCommand;
+            nodeCommandManifestFileProperties["customRunBuildCommand"] = _nodeScriptGeneratorOptions.CustomRunBuildCommand;
+            
             var scriptProps = new NodeBashBuildSnippetProperties
             {
                 PackageRegistryUrl = customRegistryUrl,
@@ -372,8 +393,10 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
                 LernaBootstrapCommand = NodeConstants.LernaBootstrapCommand,
                 InstallLageCommand = NodeConstants.InstallLageCommand,
                 LageRunBuildCommand = runBuildLageCommand,
+                NodeBuildProperties = nodeCommandManifestFileProperties,
+                NodeManifestFileName = "oryx-node-commands.toml"
             };
-
+                  
             string script = TemplateHelper.Render(
                 TemplateHelper.TemplateResource.NodeBuildSnippet,
                 scriptProps,

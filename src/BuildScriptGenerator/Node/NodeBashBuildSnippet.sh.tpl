@@ -11,6 +11,20 @@ echo "registry={{ PackageRegistryUrl }}" >> ~/.npmrc
 echo
 {{ end }}
 
+{{ if NodeManifestFileName | IsNotBlank }}
+MANIFEST_FILE={{ NodeManifestFileName }}
+
+echo "Removing existing manifest file"
+rm -f "$SOURCE_DIR/$MANIFEST_FILE"
+{{ if NodeBuildProperties != empty }}
+echo "Creating a manifest file..."
+{{ for prop in NodeBuildProperties }}
+echo "{{ prop.Key }}=\"{{ prop.Value }}\"" >> "$SOURCE_DIR/$MANIFEST_FILE"
+{{ end }}
+echo "Node Command Manifest file created."
+{{ end }}
+{{ end }}
+
 zippedModulesFileName={{ CompressedNodeModulesFileName }}
 allModulesDirName=".oryx_all_node_modules"
 prodModulesDirName=".oryx_prod_node_modules"
