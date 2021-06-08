@@ -4,6 +4,8 @@ node --version
 echo
 {{ PackageInstallerVersionCommand }}
 
+declare -a CommandList=('')
+
 {{ if PackageRegistryUrl | IsNotBlank }}
 echo
 echo "Adding package registry to .npmrc: {{ PackageRegistryUrl }}"
@@ -12,14 +14,14 @@ echo
 {{ end }}
 
 {{ if NodeManifestFileName | IsNotBlank }}
-MANIFEST_FILE={{ NodeManifestFileName }}
+COMMAND_MANIFEST_FILE={{ NodeManifestFileName }}
 
 echo "Removing existing manifest file"
-rm -f "$SOURCE_DIR/$MANIFEST_FILE"
+rm -f "$COMMAND_MANIFEST_FILE"
 {{ if NodeBuildProperties != empty }}
 echo "Creating a manifest file..."
 {{ for prop in NodeBuildProperties }}
-echo "{{ prop.Key }}=\"{{ prop.Value }}\"" >> "$SOURCE_DIR/$MANIFEST_FILE"
+echo "{{ prop.Key }}=\"{{ prop.Value }}\"" >> "$COMMAND_MANIFEST_FILE"
 {{ end }}
 echo "Node Command Manifest file created."
 {{ end }}
@@ -87,6 +89,7 @@ then
 	echo "Running '{{ ProductionOnlyPackageInstallCommand }}'..."
 	echo
 	{{ ProductionOnlyPackageInstallCommand }}
+	CommandList=(${CommandList[*]}, '{{ ProductionOnlyPackageInstallCommand }}')
 
 	if [ -d "node_modules" ]; then
 		echo
@@ -105,13 +108,16 @@ cd "$SOURCE_DIR"
 	echo "Running '{{ CustomBuildCommand }}'..."
 	echo
 	{{ CustomBuildCommand }}
+	CommandList=(${CommandList[*]}, '{{ CustomBuildCommand }}')
 {{ else if CustomRunBuildCommand | IsNotBlank }}
 	echo
 	echo "Running '{{ PackageInstallCommand }}'..."
 	echo
 	{{ PackageInstallCommand }}
+	CommandList=(${CommandList[*]}, '{{ PackageInstallCommand }}')
 	echo
 	{{ CustomRunBuildCommand }}
+	CommandList=(${CommandList[*]}, '{{ CustomRunBuildCommand }}')
 	echo
 {{ else if LernaRunBuildCommand | IsNotBlank }}
 	echo
@@ -122,35 +128,42 @@ cd "$SOURCE_DIR"
 	echo "Running '{{ LernaInitCommand }} & {{ LernaBootstrapCommand }}':"
 	{{ LernaInitCommand }}
 	{{ LernaBootstrapCommand }}
+	CommandList=(${CommandList[*]}, '{{ LernaInitCommand }}', '{{ LernaBootstrapCommand }}')
 	echo
 	echo
 	echo "Running '{{ LernaRunBuildCommand }}'..."
 	echo
 	{{ LernaRunBuildCommand }}
+	CommandList=(${CommandList[*]}, '{{ LernaRunBuildCommand }}')
 {{ else if LageRunBuildCommand | IsNotBlank }}
 	echo
 	echo "Running ' {{ InstallLageCommand }} ':"
 	{{ InstallLageCommand }}
+	CommandList=(${CommandList[*]}, '{{ InstallLageCommand }}')
 	echo
 	echo
 	echo "Running '{{ LageRunBuildCommand }}'..."
 	echo
 	{{ LageRunBuildCommand }}
+	CommandList=(${CommandList[*]}, '{{ LageRunBuildCommand }}')
 {{ else }}
 	echo
 	echo "Running '{{ PackageInstallCommand }}'..."
 	echo
 	{{ PackageInstallCommand }}
+	CommandList=(${CommandList[*]}, '{{ PackageInstallCommand }}')
 	{{ if NpmRunBuildCommand | IsNotBlank }}
 	echo
 	echo "Running '{{ NpmRunBuildCommand }}'..."
 	echo
 	{{ NpmRunBuildCommand }}
+	CommandList=(${CommandList[*]}, '{{ NpmRunBuildCommand }}')
 	{{ end }}
 	{{ if NpmRunBuildAzureCommand | IsNotBlank }}
 	echo
 	echo "Running '{{ NpmRunBuildAzureCommand }}'..."
 	echo
+	CommandList=(${CommandList[*]}, '{{ NpmRunBuildAzureCommand }}')
 	{{ NpmRunBuildAzureCommand }}
 	{{ end }}
 {{ end }}
@@ -169,11 +182,16 @@ echo "Running custom packaging scripts that might exist..."
 echo
 npm run package || true
 npm run prepublishOnly || true
+CommandList=(${CommandList[*]}, 'npm run package || true', 'npm run prepublishOnly || true')
 echo
 echo "Running 'npm pack'..."
 echo
 npm pack
+CommandList=(${CommandList[*]}, 'npm pack')
 {{ end }}
+
+echo Commands=${CommandList[*]}
+echo "BuildCommands=${CommandList[@]:1}" >> "$COMMAND_MANIFEST_FILE"
 
 cd "$SOURCE_DIR"
 

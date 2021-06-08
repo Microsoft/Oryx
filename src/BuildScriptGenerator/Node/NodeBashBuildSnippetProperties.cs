@@ -63,8 +63,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
         public string CustomBuildCommand { get; set; }
 
         /// <summary>
-        /// Gets or sets a list of properties for the build. Those properties are stored in a
-        /// manifest file that can be used when running the app.
+        /// Gets or sets a list of commands for the build.
         /// </summary>
         public IDictionary<string, string> NodeBuildProperties { get; set; }
 

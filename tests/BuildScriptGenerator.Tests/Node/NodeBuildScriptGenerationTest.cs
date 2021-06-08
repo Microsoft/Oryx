@@ -748,6 +748,57 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 snippet.BashBuildScriptSnippet);
         }
 
+
+        [Fact]
+        public void GeneratedScript_Contains_BuildCommands_CommandManifestFile()
+        {
+            // Arrange
+            var scriptGenerator = GetNodePlatform(
+                defaultNodeVersion: NodeVersions.Node12Version,
+                new BuildScriptGeneratorOptions { PlatformVersion = "12.19.1" },
+                new NodeScriptGeneratorOptions());
+            var repo = new MemorySourceRepo();
+            repo.AddFile(PackageJsonWithBuildScript, NodeConstants.PackageJsonFileName);
+            var context = CreateScriptGeneratorContext(repo);
+            var detectorResult = new NodePlatformDetectorResult
+            {
+                Platform = NodeConstants.PlatformName,
+                PlatformVersion = "10.10.10",
+            };
+            
+            var commandManifestProperties = new Dictionary<string, string>();
+            commandManifestProperties["NodeVersion"] = "10.10.10";
+
+            var expected = new NodeBashBuildSnippetProperties
+            {
+                PackageInstallCommand = NpmInstallCommand,
+                PackageInstallerVersionCommand = NodeConstants.NpmVersionCommand,
+                NpmRunBuildCommand = "npm run build",
+                NpmRunBuildAzureCommand = "npm run build:azure",
+                HasProdDependencies = true,
+                HasDevDependencies = true,
+                ProductionOnlyPackageInstallCommand = string.Format(
+                    NodeConstants.ProductionOnlyPackageInstallCommandTemplate,
+                    NpmInstallCommand),
+                CompressedNodeModulesFileName = null,
+                CompressNodeModulesCommand = null,
+                NodeBuildProperties = commandManifestProperties,
+                NodeManifestFileName = "oryx-node-commands.toml",
+
+            };
+
+            // Act
+            var snippet = scriptGenerator.GenerateBashBuildScriptSnippet(context, detectorResult);
+
+            // Assert
+            Assert.NotNull(snippet);
+            Assert.Equal(
+                TemplateHelper.Render(TemplateHelper.TemplateResource.NodeBuildSnippet, expected),
+                snippet.BashBuildScriptSnippet);
+            Assert.Contains("Node Command Manifest file created.", snippet.BashBuildScriptSnippet);
+            Assert.True(scriptGenerator.IsCleanRepo(repo));
+        }
+
         private static IProgrammingPlatform GetNodePlatform(
             string defaultNodeVersion,
             BuildScriptGeneratorOptions commonOptions,
