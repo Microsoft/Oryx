@@ -16,7 +16,7 @@ namespace Microsoft.Oryx.Tests.Common
         public const string CliBuildImageName = "oryxdevmcr.azurecr.io/public/oryx/cli";
         public const string CliBusterBuildImageName = "oryxdevmcr.azurecr.io/public/oryx/cli-buster";
         public const string LtsVerionsBusterBuildImageName = "oryxdevmcr.azurecr.io/public/oryx/build:lts-versions-buster";
-        public const string VsoBuildImageName = "oryxdevmcr.azurecr.io/public/oryx/build:vso";
+        public const string VsoSlimBuildImageName = "oryxdevmcr.azurecr.io/public/oryx/build:vso-slim";
         public const string VsoUbuntuBuildImageName = "oryxdevmcr.azurecr.io/public/oryx/build:vso-focal";
 
         public const string RemoveTestContainersEnvironmentVariableName = "ORYX_REMOVE_TEST_CONTAINERS";

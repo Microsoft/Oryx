@@ -40,6 +40,7 @@ namespace Microsoft.Oryx.BuildImage.Tests
                 data.Add(imageTestHelper.GetAzureFunctionsJamStackBuildImage());
                 data.Add(imageTestHelper.GetGitHubActionsBuildImage());
                 data.Add(imageTestHelper.GetVsoBuildImage("vso-focal"));
+                data.Add(imageTestHelper.GetVsoBuildImage("vso-slim"));
                 return data;
             }
         }
@@ -80,11 +81,13 @@ namespace Microsoft.Oryx.BuildImage.Tests
                 result.GetDebugInfo());
         }
 
-        [Fact]
-        public void OryxVsoBuildImage_Contains_PHP_Xdebug()
+        [Theory]
+        [InlineData("vso-focal")]
+        [InlineData("vso-slim")]
+        public void OryxVsoBuildImage_Contains_PHP_Xdebug(string imageVersion)
         {
             var imageTestHelper = new ImageTestHelper();
-            string buildImage = imageTestHelper.GetVsoBuildImage("vso-focal");
+            string buildImage = imageTestHelper.GetVsoBuildImage(imageVersion);
 
             // Act
             var result = _dockerCli.Run(new DockerRunArguments
@@ -106,14 +109,18 @@ namespace Microsoft.Oryx.BuildImage.Tests
         }
 
         [Theory]
-        [InlineData("bundler")]
-        [InlineData("rake")]
-        [InlineData("ruby-debug-ide")]
-        [InlineData("debase")]
-        public void OryxVsoBuildImage_Contains_Required_Ruby_Gems(string gemName)
+        [InlineData("bundler", "vso-focal")]
+        [InlineData("rake", "vso-focal")]
+        [InlineData("ruby-debug-ide", "vso-focal")]
+        [InlineData("debase", "vso-focal")]
+        [InlineData("bundler", "vso-slim")]
+        [InlineData("rake", "vso-slim")]
+        [InlineData("ruby-debug-ide", "vso-slim")]
+        [InlineData("debase", "vso-slim")]
+        public void OryxVsoBuildImage_Contains_Required_Ruby_Gems(string gemName, string imageVersion)
         {
             var imageTestHelper = new ImageTestHelper();
-            string buildImage = imageTestHelper.GetVsoBuildImage("vso-focal");
+            string buildImage = imageTestHelper.GetVsoBuildImage(imageVersion);
 
             // Act
             var result = _dockerCli.Run(new DockerRunArguments
@@ -540,7 +547,7 @@ namespace Microsoft.Oryx.BuildImage.Tests
                 var data = new TheoryData<string>();
                 data.Add(Settings.BuildImageName);
                 var imageTestHelper = new ImageTestHelper();
-                //data.Add(imageTestHelper.GetVsoBuildImage());
+                data.Add(imageTestHelper.GetVsoBuildImage("vso-slim"));
                 data.Add(imageTestHelper.GetVsoBuildImage("vso-focal"));
                 return data;
             }
