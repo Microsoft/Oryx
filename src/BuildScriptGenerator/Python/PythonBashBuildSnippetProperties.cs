@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Microsoft.Oryx.BuildScriptGenerator.Python
 {
     /// <summary>
@@ -19,6 +21,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
             string compressVirtualEnvCommand,
             string compressedVirtualEnvFileName,
             bool runPythonPackageCommand,
+            string pythonManifestFileName,
+            string pythonVersion, 
             string pythonPackageWheelProperty = null)
         {
             VirtualEnvironmentName = virtualEnvironmentName;
@@ -30,6 +34,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
             CompressedVirtualEnvFileName = compressedVirtualEnvFileName;
             RunPythonPackageCommand = runPythonPackageCommand;
             PythonPackageWheelProperty = pythonPackageWheelProperty;
+            PythonManifestFileName = pythonManifestFileName;
+            PythonVersion = pythonVersion;
         }
 
         public string VirtualEnvironmentName { get; set; }
@@ -50,6 +56,13 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
         public string CompressedVirtualEnvFileName { get; set; }
 
         public bool RunPythonPackageCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the manifest file.
+        /// </summary>
+        public string PythonManifestFileName { get; set; }
+
+        public string PythonVersion { get; set; }
 
         public string PythonPackageWheelProperty { get; set; }
     }

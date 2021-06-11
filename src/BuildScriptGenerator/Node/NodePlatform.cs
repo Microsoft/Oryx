@@ -159,7 +159,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
 
             // Write the platform name and version to the manifest file
             manifestFileProperties[ManifestFilePropertyKeys.NodeVersion] = nodePlatformDetectorResult.PlatformVersion;
-            nodeCommandManifestFileProperties[ManifestFilePropertyKeys.NodeVersion] = nodePlatformDetectorResult.PlatformVersion;
+            nodeCommandManifestFileProperties["PlatformWithVersion"] = "nodejs " + nodePlatformDetectorResult.PlatformVersion;
             var packageJson = GetPackageJsonObject(ctx.SourceRepo, _logger);
             string runBuildCommand = null;
             string runBuildAzureCommand = null;
@@ -376,7 +376,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
                 InstallLageCommand = NodeConstants.InstallLageCommand,
                 LageRunBuildCommand = runBuildLageCommand,
                 NodeBuildProperties = nodeCommandManifestFileProperties,
-                NodeManifestFileName = Path.Join(manifestDirPath, "oryx-node-commands.toml"),
+                NodeManifestFileName = Path.Join(manifestDirPath, "oryx-build-commands.txt"),
             };
             string script = TemplateHelper.Render(
                 TemplateHelper.TemplateResource.NodeBuildSnippet,

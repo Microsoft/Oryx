@@ -62,13 +62,13 @@ namespace Microsoft.Oryx.BuildImage.Tests
         [InlineData("monorepo-lerna-npm", true)]
         [InlineData("monorepo-lerna-yarn", true)]
         [InlineData("linxnodeexpress", false)]
-        [InlineData("hexo-sample", false)]
-        public void BuildMonorepoApp_Prints_BuildCommands_In_Tomlfile(string appName, bool isMonoRepo)
+        public void BuildMonorepoApp_Prints_BuildCommands_In_File(string appName, bool isMonoRepo)
         {
             // Arrange
             var volume = CreateSampleAppVolume(appName);
             var appDir = volume.ContainerDir;
             var appOutputDir = "/tmp/app1-output";
+            var commandListFile = $"{appOutputDir}/oryx-build-commands.txt";
             var script = new ShellScriptBuilder()
                 .SetEnvironmentVariable(
                     SdkStorageConstants.SdkStorageBaseUrlKeyName,
@@ -77,9 +77,9 @@ namespace Microsoft.Oryx.BuildImage.Tests
                     SettingsKeys.EnableNodeMonorepoBuild,
                     isMonoRepo.ToString())
                 .AddBuildCommand($"{appDir} -o {appOutputDir}")
-                .AddFileExistsCheck($"{appOutputDir}/oryx-node-commands.toml")
-                .AddStringExistsInFileCheck("NodeVersion=", $"{appOutputDir}/oryx-node-commands.toml")
-                .AddStringExistsInFileCheck("BuildCommands=", $"{appOutputDir}/oryx-node-commands.toml")
+                .AddFileExistsCheck($"{commandListFile}")
+                .AddStringExistsInFileCheck("PlatformWithVersion=", $"{commandListFile}")
+                .AddStringExistsInFileCheck("BuildCommands=", $"{commandListFile}")
                 .ToString();
 
             // Act

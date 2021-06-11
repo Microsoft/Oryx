@@ -117,6 +117,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -158,6 +163,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -198,6 +208,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -241,6 +256,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
                 ConfigureYarnCache = false,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -285,6 +305,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
                 ConfigureYarnCache = false,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -333,6 +358,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
                 ConfigureYarnCache = false,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -379,6 +409,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
                 ConfigureYarnCache = false,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -421,6 +456,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -463,6 +503,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -509,6 +554,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = "node_modules.tar.gz",
                 CompressNodeModulesCommand = "tar -zcf",
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -557,6 +607,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = "node_modules.tar.gz",
                 CompressNodeModulesCommand = "tar -zcf",
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -604,6 +659,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = "node_modules.zip",
                 CompressNodeModulesCommand = "zip -y -q -r",
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -634,6 +694,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 Platform = NodeConstants.PlatformName,
                 PlatformVersion = "10.10.10",
             };
+            
+            //var commandManifestProperties = new Dictionary<string, string>
+            //{
+            //    {"PlatformWithVersion", "10.10.10" },
+            // };
             var expected = new NodeBashBuildSnippetProperties
             {
                 PackageInstallCommand = NpmInstallCommand,
@@ -647,6 +712,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                     NpmInstallCommand),
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
+                NodeBuildProperties = new Dictionary<string, string>
+                {
+                    {"PlatformWithVersion", "nodejs 10.10.10" },
+                },
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act
@@ -767,7 +837,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
             };
             
             var commandManifestProperties = new Dictionary<string, string>();
-            commandManifestProperties["NodeVersion"] = "10.10.10";
+            commandManifestProperties["PlatformWithVersion"] = "nodejs 10.10.10";
 
             var expected = new NodeBashBuildSnippetProperties
             {
@@ -783,8 +853,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
                 NodeBuildProperties = commandManifestProperties,
-                NodeManifestFileName = "oryx-node-commands.toml",
-
+                NodeManifestFileName = "oryx-build-commands.txt",
             };
 
             // Act

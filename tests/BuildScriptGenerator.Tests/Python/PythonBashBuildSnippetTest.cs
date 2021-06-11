@@ -22,6 +22,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Python
                 enableCollectStatic: true,
                 compressVirtualEnvCommand: null,
                 compressedVirtualEnvFileName: null,
+                pythonManifestFileName: "oryx-build-commands.txt",
+                pythonVersion: null,
                 runPythonPackageCommand: false
                 );
 
@@ -30,6 +32,33 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Python
 
             // Assert
             Assert.Contains("manage.py collectstatic", text);
+        }
+
+        [Fact]
+        public void GeneratedSnippet_Contains_BuildCommands_And_PythonVersion_Info()
+        {
+            // Arrange
+            var snippetProps = new PythonBashBuildSnippetProperties(
+                virtualEnvironmentName: null,
+                virtualEnvironmentModule: null,
+                virtualEnvironmentParameters: null,
+                packagesDirectory: "packages_dir",
+                enableCollectStatic: true,
+                compressVirtualEnvCommand: null,
+                compressedVirtualEnvFileName: null,
+                pythonManifestFileName: "oryx-build-commands.txt",
+                pythonVersion: "3.6",
+                runPythonPackageCommand: false
+                );
+
+            // Act
+            var text = TemplateHelper.Render(TemplateHelper.TemplateResource.PythonSnippet, snippetProps);
+
+            // Assert
+            Assert.NotEmpty(text);
+            Assert.NotNull(text);
+            Assert.Contains("COMMAND_MANIFEST_FILE=oryx-build-commands.txt", text);
+
         }
 
         [Fact]
@@ -44,6 +73,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Python
                 enableCollectStatic: false,
                 compressVirtualEnvCommand: null,
                 compressedVirtualEnvFileName: null,
+                pythonManifestFileName: "oryx-build-commands.txt",
+                pythonVersion: null,
                 runPythonPackageCommand: false);
 
             // Act
@@ -65,6 +96,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Python
                 enableCollectStatic: false,
                 compressVirtualEnvCommand: null,
                 compressedVirtualEnvFileName: null,
+                pythonManifestFileName: "oryx-build-commands.txt",
+                pythonVersion: null,
                 runPythonPackageCommand: true);
 
             // Act
@@ -88,6 +121,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Python
                 compressVirtualEnvCommand: null,
                 compressedVirtualEnvFileName: null,
                 runPythonPackageCommand: false,
+                pythonManifestFileName: "oryx-build-commands.txt",
+                pythonVersion: null,
                 pythonPackageWheelProperty: "universal");
 
             // Act
@@ -111,6 +146,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Python
                 compressVirtualEnvCommand: null,
                 compressedVirtualEnvFileName: null,
                 runPythonPackageCommand: true,
+                pythonManifestFileName: "oryx-build-commands.txt",
+                pythonVersion: null,
                 pythonPackageWheelProperty: "universal");
 
             // Act

@@ -21,7 +21,7 @@ rm -f "$COMMAND_MANIFEST_FILE"
 {{ if NodeBuildProperties != empty }}
 echo "Creating a manifest file..."
 {{ for prop in NodeBuildProperties }}
-echo "{{ prop.Key }}=\"{{ prop.Value }}\"" >> "$COMMAND_MANIFEST_FILE"
+echo "{{ prop.Key }}={{ prop.Value }}" >> "$COMMAND_MANIFEST_FILE"
 {{ end }}
 echo "Node Command Manifest file created."
 {{ end }}
@@ -191,7 +191,15 @@ CommandList=(${CommandList[*]}, 'npm pack')
 {{ end }}
 
 echo Commands=${CommandList[*]}
-echo "BuildCommands=${CommandList[@]:1}" >> "$COMMAND_MANIFEST_FILE"
+
+ReadImageType=$(cat /opt/oryx/.imagetype)
+
+if [ "$ReadImageType" = "vso-focal" ]
+	echo $ReadImageType
+	echo "BuildCommands=${CommandList[@]:1}" >> "$COMMAND_MANIFEST_FILE"
+else
+	echo "Not a vso image, so not writing build commands"
+fi
 
 cd "$SOURCE_DIR"
 
