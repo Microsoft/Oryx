@@ -162,7 +162,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
             var virtualEnvName = GetVirtualEnvironmentName(context);
             var isPythonPackageCommandEnabled = _commonOptions.ShouldPackage;
             var pythonPackageWheelType = GetPythonPackageWheelType(context);
-            var manifestDirPath = context.ManifestDir;
+            var manifestDirPath = string.IsNullOrEmpty(context.ManifestDir) ? context.SourceRepo.RootPath : context.ManifestDir;
 
             if (!isPythonPackageCommandEnabled && !string.IsNullOrWhiteSpace(pythonPackageWheelType))
             {
@@ -416,7 +416,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
         {
             var scriptProperties = new JupyterNotebookBashBuildSnippetProperties();
             scriptProperties.HasRequirementsTxtFile = detectorResult.HasRequirementsTxtFile;
-            var manifestDirPath = context.ManifestDir;
+            var manifestDirPath = string.IsNullOrEmpty(context.ManifestDir) ? context.SourceRepo.RootPath : context.ManifestDir;
 
             if (detectorResult.HasCondaEnvironmentYmlFile)
             {

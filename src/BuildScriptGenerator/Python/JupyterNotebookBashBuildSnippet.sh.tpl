@@ -17,6 +17,8 @@ echo "{{ NoteBookManifestFileName }}"
 COMMAND_MANIFEST_FILE={{ NoteBookManifestFileName }}
 {{ end }}
 
+echo "PlatFormWithVersion=python {{ EnvironmentTemplatePythonVersion }}" >> "$COMMAND_MANIFEST_FILE"
+
 declare -a CommandList=('')
 
 environmentPrefix="./venv"
@@ -25,6 +27,7 @@ echo "Setting up Conda virtual environemnt..."
 echo
 START_TIME=$SECONDS
 CondaEnvCreateCommand="conda env create --file $envFile --prefix $environmentPrefix --quiet"
+echo "BuildCommands=$CondaEnvCreateCommand" >> "$COMMAND_MANIFEST_FILE"
 CommandList=(${CommandList[*]}, $CondaEnvCreateCommand)
 conda env create --file $envFile --prefix $environmentPrefix --quiet
 ELAPSED_TIME=$(($SECONDS - $START_TIME))
@@ -34,6 +37,7 @@ echo "Done in $ELAPSED_TIME sec(s)."
 	echo
 	echo "Activating environemnt..."
 	CondaActivateCommand= "conda activate $environmentPrefix"
+	echo ", $CondaActivateCommand" >> "$COMMAND_MANIFEST_FILE"
 	CommandList=(${CommandList[*]}, $CondaActivateCommand)
 	conda activate $environmentPrefix
 
@@ -41,18 +45,17 @@ echo "Done in $ELAPSED_TIME sec(s)."
 	echo "Running pip install..."
 	echo
 	PipInstallCommand="pip install --no-cache-dir -r requirements.txt"
+	echo ", $PipInstallCommand" >> "$COMMAND_MANIFEST_FILE"
 	CommandList=(${CommandList[*]}, $PipInstallCommand)
 	pip install --no-cache-dir -r requirements.txt
 {{ end }}
 
 echo Commands=${CommandList[*]}
-echo "PlatFormWithVersion=python {{ EnvironmentTemplatePythonVersion }}" >> "$COMMAND_MANIFEST_FILE"
 
 ReadImageType=$(cat /opt/oryx/.imagetype)
 
 if [ "$ReadImageType" = "vso-focal" ]
 	echo $ReadImageType
-	echo "BuildCommands=${CommandList[@]:1}" >> "$COMMAND_MANIFEST_FILE"
 else
-	echo "Not a vso image, so not writing build commands"
+	rm "$COMMAND_MANIFEST_FILE"
 fi 

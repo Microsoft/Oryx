@@ -170,8 +170,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
             string packageManagerCmd = null;
             string packageInstallCommand = null;
             string packageInstallerVersionCommand = null;
-            var manifestDirPath = ctx.ManifestDir;
-
+            var manifestDirPath = string.IsNullOrEmpty(ctx.ManifestDir) ? ctx.SourceRepo.RootPath : ctx.ManifestDir;
+            
             if (_nodeScriptGeneratorOptions.EnableNodeMonorepoBuild &&
                 nodePlatformDetectorResult.HasLernaJsonFile &&
                 nodePlatformDetectorResult.HasLageConfigJSFile)

@@ -7,6 +7,8 @@ PIP_CACHE_DIR=/usr/local/share/pip-cache
 COMMAND_MANIFEST_FILE={{ PythonManifestFileName }}
 {{ end }}
 
+echo "PlatFormWithVersion=python {{ PythonVersion }}" >> "$COMMAND_MANIFEST_FILE"
+
 declare -a CommandList=('')
 InstallCommand=""
 
@@ -211,7 +213,6 @@ fi
 {{ end }}
 
 echo Commands=${CommandList[*]}
-echo "PlatFormWithVersion=python {{ PythonVersion }}" >> "$COMMAND_MANIFEST_FILE"
 
 ReadImageType=$(cat /opt/oryx/.imagetype)
 

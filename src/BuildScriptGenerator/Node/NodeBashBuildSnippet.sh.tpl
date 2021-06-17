@@ -1,18 +1,3 @@
-echo
-echo "Using Node version:"
-node --version
-echo
-{{ PackageInstallerVersionCommand }}
-
-declare -a CommandList=('')
-
-{{ if PackageRegistryUrl | IsNotBlank }}
-echo
-echo "Adding package registry to .npmrc: {{ PackageRegistryUrl }}"
-echo "registry={{ PackageRegistryUrl }}" >> ~/.npmrc
-echo
-{{ end }}
-
 {{ if NodeManifestFileName | IsNotBlank }}
 COMMAND_MANIFEST_FILE={{ NodeManifestFileName }}
 
@@ -25,6 +10,22 @@ echo "{{ prop.Key }}={{ prop.Value }}" >> "$COMMAND_MANIFEST_FILE"
 {{ end }}
 echo "Node Command Manifest file created."
 {{ end }}
+{{ end }}
+
+echo
+echo "Using Node version:"
+node --version
+echo
+echo "BuildCommands={{ PackageInstallerVersionCommand }}" >> "$COMMAND_MANIFEST_FILE"
+{{ PackageInstallerVersionCommand }}
+
+declare -a CommandList=('')
+
+{{ if PackageRegistryUrl | IsNotBlank }}
+echo
+echo "Adding package registry to .npmrc: {{ PackageRegistryUrl }}"
+echo "registry={{ PackageRegistryUrl }}" >> ~/.npmrc
+echo
 {{ end }}
 
 zippedModulesFileName={{ CompressedNodeModulesFileName }}
@@ -88,7 +89,9 @@ then
 	echo
 	echo "Running '{{ ProductionOnlyPackageInstallCommand }}'..."
 	echo
+	echo ", {{ ProductionOnlyPackageInstallCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	{{ ProductionOnlyPackageInstallCommand }}
+	
 	CommandList=(${CommandList[*]}, '{{ ProductionOnlyPackageInstallCommand }}')
 
 	if [ -d "node_modules" ]; then
@@ -107,15 +110,18 @@ cd "$SOURCE_DIR"
 	echo
 	echo "Running '{{ CustomBuildCommand }}'..."
 	echo
+	echo ", {{ CustomBuildCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	{{ CustomBuildCommand }}
 	CommandList=(${CommandList[*]}, '{{ CustomBuildCommand }}')
 {{ else if CustomRunBuildCommand | IsNotBlank }}
 	echo
 	echo "Running '{{ PackageInstallCommand }}'..."
 	echo
+	echo ", {{ PackageInstallCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	{{ PackageInstallCommand }}
 	CommandList=(${CommandList[*]}, '{{ PackageInstallCommand }}')
 	echo
+	echo ", {{ CustomRunBuildCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	{{ CustomRunBuildCommand }}
 	CommandList=(${CommandList[*]}, '{{ CustomRunBuildCommand }}')
 	echo
@@ -126,6 +132,7 @@ cd "$SOURCE_DIR"
 	echo
 	echo
 	echo "Running '{{ LernaInitCommand }} & {{ LernaBootstrapCommand }}':"
+	echo ", {{ LernaInitCommand }}', '{{ LernaBootstrapCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	{{ LernaInitCommand }}
 	{{ LernaBootstrapCommand }}
 	CommandList=(${CommandList[*]}, '{{ LernaInitCommand }}', '{{ LernaBootstrapCommand }}')
@@ -133,16 +140,19 @@ cd "$SOURCE_DIR"
 	echo
 	echo "Running '{{ LernaRunBuildCommand }}'..."
 	echo
+	echo ", {{ LernaRunBuildCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	{{ LernaRunBuildCommand }}
 	CommandList=(${CommandList[*]}, '{{ LernaRunBuildCommand }}')
 {{ else if LageRunBuildCommand | IsNotBlank }}
 	echo
 	echo "Running ' {{ InstallLageCommand }} ':"
+	echo ", {{ InstallLageCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	{{ InstallLageCommand }}
 	CommandList=(${CommandList[*]}, '{{ InstallLageCommand }}')
 	echo
 	echo
 	echo "Running '{{ LageRunBuildCommand }}'..."
+	echo ", {{ LageRunBuildCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	echo
 	{{ LageRunBuildCommand }}
 	CommandList=(${CommandList[*]}, '{{ LageRunBuildCommand }}')
@@ -150,11 +160,13 @@ cd "$SOURCE_DIR"
 	echo
 	echo "Running '{{ PackageInstallCommand }}'..."
 	echo
+	echo ", {{ PackageInstallCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	{{ PackageInstallCommand }}
 	CommandList=(${CommandList[*]}, '{{ PackageInstallCommand }}')
 	{{ if NpmRunBuildCommand | IsNotBlank }}
 	echo
 	echo "Running '{{ NpmRunBuildCommand }}'..."
+	echo ", {{ NpmRunBuildCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	echo
 	{{ NpmRunBuildCommand }}
 	CommandList=(${CommandList[*]}, '{{ NpmRunBuildCommand }}')
@@ -162,6 +174,7 @@ cd "$SOURCE_DIR"
 	{{ if NpmRunBuildAzureCommand | IsNotBlank }}
 	echo
 	echo "Running '{{ NpmRunBuildAzureCommand }}'..."
+	echo ", {{ NpmRunBuildAzureCommand }}" >> "$COMMAND_MANIFEST_FILE"
 	echo
 	CommandList=(${CommandList[*]}, '{{ NpmRunBuildAzureCommand }}')
 	{{ NpmRunBuildAzureCommand }}
@@ -182,23 +195,26 @@ echo "Running custom packaging scripts that might exist..."
 echo
 npm run package || true
 npm run prepublishOnly || true
+echo ", npm run package || true, npm run prepublishOnly || true" >> "$COMMAND_MANIFEST_FILE"
 CommandList=(${CommandList[*]}, 'npm run package || true', 'npm run prepublishOnly || true')
 echo
 echo "Running 'npm pack'..."
 echo
+echo ", npm pack" >> "$COMMAND_MANIFEST_FILE"
 npm pack
 CommandList=(${CommandList[*]}, 'npm pack')
 {{ end }}
 
 echo Commands=${CommandList[*]}
 
+echo "${CommandList[@]:1}" 
+
 ReadImageType=$(cat /opt/oryx/.imagetype)
 
 if [ "$ReadImageType" = "vso-focal" ]
 	echo $ReadImageType
-	echo "BuildCommands=${CommandList[@]:1}" >> "$COMMAND_MANIFEST_FILE"
 else
-	echo "Not a vso image, so not writing build commands"
+	rm "$COMMAND_MANIFEST_FILE"
 fi
 
 cd "$SOURCE_DIR"
