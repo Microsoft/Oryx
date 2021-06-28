@@ -207,12 +207,13 @@ CommandList=(${CommandList[*]}, 'npm pack')
 
 echo Commands=${CommandList[*]}
 
-echo "${CommandList[@]:1}" 
+
 
 ReadImageType=$(cat /opt/oryx/.imagetype)
 
 if [ "$ReadImageType" = "vso-focal" ]
 	echo $ReadImageType
+	cat "$COMMAND_MANIFEST_FILE"
 else
 	rm "$COMMAND_MANIFEST_FILE"
 fi

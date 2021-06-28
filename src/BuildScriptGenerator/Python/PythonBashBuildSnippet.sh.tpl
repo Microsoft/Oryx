@@ -38,11 +38,13 @@ fi
 	echo Creating virtual environment...
 	
 	CreateVenvCommand="$python -m $VIRTUALENVIRONMENTMODULE $VIRTUALENVIRONMENTNAME $VIRTUALENVIRONMENTOPTIONS"
+	echo "BuildCommands=$CreateVenvCommand" >> "$COMMAND_MANIFEST_FILE"
 	CommandList=(${CommandList[*]}, $CreateVenvCommand)
 
 	$python -m $VIRTUALENVIRONMENTMODULE $VIRTUALENVIRONMENTNAME $VIRTUALENVIRONMENTOPTIONS
 
 	echo Activating virtual environment...
+	echo " , $ActivateVenvCommand" >> "$COMMAND_MANIFEST_FILE"
 	ActivateVenvCommand="source $VIRTUALENVIRONMENTNAME/bin/activate"
 	CommandList=(${CommandList[*]}, $ActivateVenvCommand)
 	source $VIRTUALENVIRONMENTNAME/bin/activate
@@ -51,6 +53,7 @@ fi
 	then
 		echo "Running pip install..."
 		InstallCommand="python -m pip install --cache-dir $PIP_CACHE_DIR --prefer-binary -r requirements.txt | ts $TS_FMT"
+		echo " , $InstallCommand" >> "$COMMAND_MANIFEST_FILE"
 		CommandList=(${CommandList[*]}, $InstallCommand)
 		python -m pip install --cache-dir $PIP_CACHE_DIR --prefer-binary -r requirements.txt | ts $TS_FMT
 		pipInstallExitCode=${PIPESTATUS[0]}
@@ -62,6 +65,7 @@ fi
 	then
 		echo "Running python setup.py install..."
 		InstallCommand="$python setup.py install --user| ts $TS_FMT"
+		echo " , $InstallCommand" >> "$COMMAND_MANIFEST_FILE"
 		CommandList=(${CommandList[*]}, $InstallCommand)
 		$python setup.py install --user| ts $TS_FMT
 		pythonBuildExitCode=${PIPESTATUS[0]}
@@ -73,10 +77,12 @@ fi
 	then
 		echo "Running pip install poetry..."
 		InstallPipCommand="pip install poetry"
+		echo " , $InstallPipCommand" >> "$COMMAND_MANIFEST_FILE"
 		CommandList=(${CommandList[*]}, $InstallPipCommand)
 		pip install poetry
 		echo "Running poetry install..."
 		InstallPoetryCommand="poetry install"
+		echo " , $InstallPoetryCommand" >> "$COMMAND_MANIFEST_FILE"
 		CommandList=(${CommandList[*]}, $InstallPoetryCommand)
 		poetry install
 		pythonBuildExitCode=${PIPESTATUS[0]}
@@ -97,6 +103,7 @@ fi
 		echo Running pip install...
 		START_TIME=$SECONDS
 		InstallCommand="$python -m pip install --cache-dir $PIP_CACHE_DIR --prefer-binary -r requirements.txt --target="{{ PackagesDirectory }}" --upgrade | ts $TS_FMT"
+		echo " , $InstallCommand" >> "$COMMAND_MANIFEST_FILE"
 		CommandList=(${CommandList[*]}, $InstallCommand)
 		$python -m pip install --cache-dir $PIP_CACHE_DIR --prefer-binary -r requirements.txt --target="{{ PackagesDirectory }}" --upgrade | ts $TS_FMT
 		pipInstallExitCode=${PIPESTATUS[0]}
@@ -113,13 +120,14 @@ fi
 		START_TIME=$SECONDS
 		UpgradeCommand="pip install --upgrade pip"
 		CommandList=(${CommandList[*]}, $UpgradeCommand)
-
+		echo " , $UpgradeCommand" >> "$COMMAND_MANIFEST_FILE"
 		pip install --upgrade pip
 		ELAPSED_TIME=$(($SECONDS - $START_TIME))
 		echo "Done in $ELAPSED_TIME sec(s)."
 
 		echo "Running python setup.py install..."
 		InstallCommand="$python setup.py install --user| ts $TS_FMT"
+		echo " , $InstallCommand" >> "$COMMAND_MANIFEST_FILE"
 		CommandList=(${CommandList[*]}, $InstallCommand)
 		$python setup.py install --user| ts $TS_FMT
 		pythonBuildExitCode=${PIPESTATUS[0]}
@@ -131,11 +139,13 @@ fi
 	then
 		echo "Running pip install poetry..."
 		InstallPipCommand="pip install poetry"
+		echo " , $InstallPipCommand" >> "$COMMAND_MANIFEST_FILE"
 		CommandList=(${CommandList[*]}, $InstallPipCommand)
 		pip install poetry
 		START_TIME=$SECONDS
 		echo "Running poetry install..."
 		InstallPoetryCommand="poetry install"
+		echo " , $InstallPoetryCommand" >> "$COMMAND_MANIFEST_FILE"
 		CommandList=(${CommandList[*]}, $InstallPoetryCommand)
 		poetry install
 		ELAPSED_TIME=$(($SECONDS - $START_TIME))
@@ -187,6 +197,7 @@ fi
 	PackageEggCommand="$python setup.py bdist_egg"
 	
 	echo "Now creating python package egg ...."
+	echo " , $PackageWheelCommand, $PackageEggCommand" >> "$COMMAND_MANIFEST_FILE"
 	CommandList=(${CommandList[*]}, $PackageWheelCommand, $PackageEggCommand)
 	$python setup.py bdist_egg
 	echo
@@ -203,6 +214,7 @@ fi
 			echo Running 'collectstatic'...
 			START_TIME=$SECONDS
 			CollectStaticCommand="$python_bin manage.py collectstatic --noinput || EXIT_CODE=$? && true "
+			echo " , $CollectStaticCommand" >> "$COMMAND_MANIFEST_FILE"
 			CommandList=(${CommandList[*]}, $CollectStaticCommand)
 			$python_bin manage.py collectstatic --noinput || EXIT_CODE=$? && true ; 
 			echo "'collectstatic' exited with exit code $EXIT_CODE."
@@ -218,9 +230,10 @@ ReadImageType=$(cat /opt/oryx/.imagetype)
 
 if [ "$ReadImageType" = "vso-focal" ]
 	echo $ReadImageType
-	echo "BuildCommands=${CommandList[@]:1}" >> "$COMMAND_MANIFEST_FILE"
+	cat "$COMMAND_MANIFEST_FILE"
 else
 	echo "Not a vso image, so not writing build commands"
+	rm "$COMMAND_MANIFEST_FILE"
 fi
 
 {{ if VirtualEnvironmentName | IsNotBlank }}
