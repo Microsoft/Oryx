@@ -212,6 +212,7 @@ echo Commands=${CommandList[*]}
 ReadImageType=$(cat /opt/oryx/.imagetype)
 
 if [ "$ReadImageType" = "vso-focal" ]
+then
 	echo $ReadImageType
 	cat "$COMMAND_MANIFEST_FILE"
 else

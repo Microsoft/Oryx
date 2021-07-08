@@ -123,8 +123,10 @@ RUN set -ex \
     && ln -s $DOT_NET_CORE_31_SDK_VERSION 3-lts \
     && ln -s 3-lts lts \
     # Install Hugo
+    && mkdir -p /home/codespace/.hugo \
     && $imagesDir/build/installHugo.sh \
     # Install Node
+    && mkdir -p /home/codespace/.nodejs \
     && . $buildDir/__nodeVersions.sh \
     && $imagesDir/installPlatform.sh nodejs $NODE10_VERSION \
     && $imagesDir/installPlatform.sh nodejs $NODE12_VERSION \
@@ -142,6 +144,7 @@ RUN set -ex \
     && ln -s $NODE12_VERSION 12 \
     && ln -s $NODE14_VERSION 14 \
     && ln -s 14 lts \
+    && ln -s 14 /home/codespace/.nodejs/current \
     && cd /opt/yarn \
     && ln -s $YARN_VERSION stable \
     && ln -s $YARN_VERSION latest \
@@ -149,6 +152,7 @@ RUN set -ex \
     && ln -s $YARN_MINOR_VERSION $YARN_MAJOR_VERSION \
     # Install Python SDKs
     # Upgrade system python
+    && mkdir -p /home/codespace/.python \
     && pip install --upgrade cython \
     && pip3 install --upgrade cython \
     && . $buildDir/__pythonVersions.sh \
@@ -166,8 +170,10 @@ RUN set -ex \
     && ln -s $PYTHON38_VERSION latest \
     && ln -s $PYTHON38_VERSION stable \
     && ln -s 3.8 3 \
+    && ln -s $PYTHON38_VERSION /home/codespace/.python/current \
     # Install PHP pre-reqs
     && $imagesDir/build/php/prereqs/installPrereqs.sh \
+    && mkdir -p /home/codespace/.php \
     # Copy PHP versions
     && . $buildDir/__phpVersions.sh \
     && $imagesDir/installPlatform.sh php $PHP72_VERSION \
@@ -177,6 +183,7 @@ RUN set -ex \
     && cd /opt/php \
     && ln -s 7.3 7 \
     && ln -s 7 lts \
+    && ln -s $PHP73_VERSION /home/codespace/.php/current \
     && cd /opt/php-composer \
     && ln -sfn 2.0.8 stable \
     && ln -sfn /opt/php-composer/stable/composer.phar /opt/php-composer/composer.phar \
@@ -191,14 +198,15 @@ RUN set -ex \
     && ln -s /opt/buildscriptgen/GenerateBuildScript /opt/oryx/oryx \
     && rm -f /etc/apt/sources.list.d/buster.list
 
-ENV ORYX_PATHS="/opt/oryx:/opt/nodejs/lts/bin:/opt/dotnet/lts:/opt/python/latest/bin:/opt/php/lts/bin:/opt/php-composer:/opt/yarn/stable/bin:/opt/hugo/lts::/opt/java/lts/bin:/opt/maven/lts/bin:/opt/ruby/lts/bin"
+ENV ORYX_TERMINAL_PATHS="/home/codespace/.nodejs/current/bin:/home/codespace/.python/current/bin:/home/codespace/.php/current/bin:/home/codespace/.java/current/bin:/home/codespace/.maven/current/bin:/home/codespace/.ruby/current/bin" \
+    ORYX_PATHS="$ORYX_TERMINAL_PATHS:/opt/oryx:/opt/nodejs/lts/bin:/opt/dotnet/lts:/opt/python/latest/bin:/opt/php/lts/bin:/opt/php-composer:/opt/yarn/stable/bin:/opt/hugo/lts::/opt/java/lts/bin:/opt/maven/lts/bin:/opt/ruby/lts/bin"
 
 ENV ORYX_PREFER_USER_INSTALLED_SDKS=true \
     ORIGINAL_PATH="$PATH" \
     PATH="$ORYX_PATHS:$PATH" \
     CONDA_SCRIPT="/opt/conda/etc/profile.d/conda.sh" \
-    RUBY_HOME="/opt/ruby/lts" \
-    JAVA_HOME="/opt/java/lts" \
+    RUBY_HOME="/home/codespace/.ruby/current" \
+    JAVA_HOME="/home/codespace/.java/current" \
     DYNAMIC_INSTALL_ROOT_DIR="/opt"
 
 # Now adding remaining of VSO platform features
@@ -229,18 +237,23 @@ RUN buildDir="/opt/tmp/build" \
     && cd $imagesDir/build/python/conda \
     && cp -rf * "$condaDir" \
     && cd $imagesDir \
+    && mkdir -p /home/codespace/.ruby \
     && . $buildDir/__rubyVersions.sh \
     && ./installPlatform.sh ruby $RUBY27_VERSION \
     && cd /opt/ruby \
     && ln -s $RUBY27_VERSION /opt/ruby/lts \
+    && ln -s $RUBY27_VERSION /home/codespace/.ruby/current \
     && cd $imagesDir \
+    && mkdir -p /home/codespace/.java \
     && . $buildDir/__javaVersions.sh \
     && ./installPlatform.sh java $JAVA_VERSION \
     && ./installPlatform.sh maven $MAVEN_VERSION \
     && cd /opt/java \
     && ln -s $JAVA_VERSION lts \
+    && ln -s $JAVA_VERSION /home/codespace/.java/current \
     && cd /opt/maven \
     && ln -s $MAVEN_VERSION lts \
+    && ln -s $MAVEN_VERSION /home/codespace/.maven/current \
     && npm install -g lerna \
     && pecl install -f libsodium \
     && echo "vso-focal" > /opt/oryx/.imagetype

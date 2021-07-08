@@ -20,6 +20,7 @@ for keyID in $KEY_IDS; do
         gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$keyID" || \
         gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$keyID" || \
         gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$keyID" || \
+        gpg --batch --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "$keyID" || \
         EXIT_CODE=$?
 
         if [ "$EXIT_CODE" == '' ] || [ "$EXIT_CODE" == 0 ]; then
