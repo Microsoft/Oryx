@@ -253,6 +253,7 @@ RUN buildDir="/opt/tmp/build" \
     && ln -s $JAVA_VERSION /home/codespace/.java/current \
     && cd /opt/maven \
     && ln -s $MAVEN_VERSION lts \
+    && mkdir -p /home/codespace/.maven/current \
     && ln -s $MAVEN_VERSION /home/codespace/.maven/current \
     && npm install -g lerna \
     && pecl install -f libsodium \
