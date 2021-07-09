@@ -21,8 +21,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
             string compressVirtualEnvCommand,
             string compressedVirtualEnvFileName,
             bool runPythonPackageCommand,
-            string pythonManifestFileName,
-            string pythonVersion, 
+            string pythonVersion,
+            string pythonBuildCommandsFileName = null,
             string pythonPackageWheelProperty = null)
         {
             VirtualEnvironmentName = virtualEnvironmentName;
@@ -34,7 +34,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
             CompressedVirtualEnvFileName = compressedVirtualEnvFileName;
             RunPythonPackageCommand = runPythonPackageCommand;
             PythonPackageWheelProperty = pythonPackageWheelProperty;
-            PythonManifestFileName = pythonManifestFileName;
+            PythonBuildCommandsFileName = pythonBuildCommandsFileName;
             PythonVersion = pythonVersion;
         }
 
@@ -57,12 +57,12 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
 
         public bool RunPythonPackageCommand { get; set; }
 
-        /// <summary>
-        /// Gets or sets the name of the manifest file.
-        /// </summary>
-        public string PythonManifestFileName { get; set; }
-
         public string PythonVersion { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the python build commands file.
+        /// </summary>
+        public string PythonBuildCommandsFileName { get; set; }
 
         public string PythonPackageWheelProperty { get; set; }
     }

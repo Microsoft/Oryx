@@ -11,10 +11,10 @@ envFileTemplate="/opt/oryx/conda/{{ EnvironmentTemplateFileName }}"
 sed 's/PYTHON_VERSION/{{ EnvironmentTemplatePythonVersion }}/g' "$envFileTemplate" > $envFile
 {{ end }}
 
-echo "{{ NoteBookManifestFileName }}"
+echo "{{ NoteBookBuildCommandsFileName }}"
 
-{{ if NoteBookManifestFileName | IsNotBlank }}
-COMMAND_MANIFEST_FILE={{ NoteBookManifestFileName }}
+{{ if NoteBookBuildCommandsFileName | IsNotBlank }}
+COMMAND_MANIFEST_FILE={{ NoteBookBuildCommandsFileName }}
 {{ end }}
 
 echo "PlatFormWithVersion=python {{ EnvironmentTemplatePythonVersion }}" >> "$COMMAND_MANIFEST_FILE"

@@ -702,7 +702,7 @@ namespace Microsoft.Oryx.BuildImage.Tests
             var volume = CreateSampleAppVolume(appName);
             var appDir = volume.ContainerDir;
             var appOutputDir = "/tmp/app1-output";
-            var commandListFile = $"{appOutputDir}/oryx-build-commands.txt";
+            var commandListFile = $"{appOutputDir}/FilePaths.BuildCommandsFileName";
             var script = new ShellScriptBuilder()
                 .SetEnvironmentVariable(
                     SdkStorageConstants.SdkStorageBaseUrlKeyName,

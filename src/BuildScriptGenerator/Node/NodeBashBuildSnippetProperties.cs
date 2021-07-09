@@ -68,8 +68,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
         public IDictionary<string, string> NodeBuildProperties { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the manifest file.
+        /// Gets or sets the build command file for nodejs.
         /// </summary>
-        public string NodeManifestFileName { get; set; }
+        public string NodeBuildCommandsFile { get; set; }
     }
 }

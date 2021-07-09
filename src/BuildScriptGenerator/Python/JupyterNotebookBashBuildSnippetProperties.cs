@@ -18,8 +18,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
         public bool HasRequirementsTxtFile { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the manifest file.
+        /// Gets or sets the name of the build commands file for conda.
         /// </summary>
-        public string NoteBookManifestFileName { get; set; }
+        public string NoteBookBuildCommandsFileName { get; set; }
     }
 }

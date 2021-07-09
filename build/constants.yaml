@@ -150,6 +150,7 @@
   constants:
     compressed-output-file-name: oryx_output.tar.gz
     build-manifest-file-name: oryx-manifest.toml
+    build-commands-file-name: oryx-build-commands.txt
     run-script-generator-dir: /opt/startupcmdgen
     node-app-insights-loader-file-name: applicationinsights/out/Bootstrap/Oryx.js
     node-global-modules-path: /usr/local/lib/node_modules

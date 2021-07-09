@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Microsoft.Oryx.BuildScriptGenerator.Common;
 using Microsoft.Oryx.BuildScriptGenerator.Node;
 using Microsoft.Oryx.Detector;
 using Microsoft.Oryx.Detector.Node;
@@ -121,7 +122,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -167,7 +168,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -212,7 +213,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -260,7 +261,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -309,7 +310,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -362,7 +363,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -413,7 +414,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -460,7 +461,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -507,7 +508,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -558,7 +559,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -611,7 +612,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -663,7 +664,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -716,7 +717,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 {
                     {"PlatformWithVersion", "nodejs 10.10.10" },
                 },
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act
@@ -853,7 +854,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Tests.Node
                 CompressedNodeModulesFileName = null,
                 CompressNodeModulesCommand = null,
                 NodeBuildProperties = commandManifestProperties,
-                NodeManifestFileName = "oryx-build-commands.txt",
+                NodeManifestFileName = FilePaths.BuildCommandsFileName,
             };
 
             // Act

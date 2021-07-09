@@ -3,11 +3,11 @@ declare -r REQS_NOT_FOUND_MSG='Could not find setup.py or requirements.txt; Not 
 echo "Python Version: $python"
 PIP_CACHE_DIR=/usr/local/share/pip-cache
 
-{{ if PythonManifestFileName | IsNotBlank }}
-COMMAND_MANIFEST_FILE={{ PythonManifestFileName }}
+{{ if PythonBuildCommandsFileName | IsNotBlank }}
+COMMAND_MANIFEST_FILE={{ PythonBuildCommandsFileName }}
 {{ end }}
 
-echo "PlatFormWithVersion=python {{ PythonVersion }}" >> "$COMMAND_MANIFEST_FILE"
+echo "PlatFormWithVersion=python {{ PythonVersion }}" > "$COMMAND_MANIFEST_FILE"
 
 declare -a CommandList=('')
 InstallCommand=""
@@ -44,7 +44,7 @@ fi
 	$python -m $VIRTUALENVIRONMENTMODULE $VIRTUALENVIRONMENTNAME $VIRTUALENVIRONMENTOPTIONS
 
 	echo Activating virtual environment...
-	echo " , $ActivateVenvCommand" >> "$COMMAND_MANIFEST_FILE"
+	printf %s " , $ActivateVenvCommand" >> "$COMMAND_MANIFEST_FILE"
 	ActivateVenvCommand="source $VIRTUALENVIRONMENTNAME/bin/activate"
 	CommandList=(${CommandList[*]}, $ActivateVenvCommand)
 	source $VIRTUALENVIRONMENTNAME/bin/activate

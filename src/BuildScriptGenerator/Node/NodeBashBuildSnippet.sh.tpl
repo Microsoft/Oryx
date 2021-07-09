@@ -1,5 +1,5 @@
-{{ if NodeManifestFileName | IsNotBlank }}
-COMMAND_MANIFEST_FILE={{ NodeManifestFileName }}
+{{ if NodeBuildCommandsFile | IsNotBlank }}
+COMMAND_MANIFEST_FILE={{ NodeBuildCommandsFile }}
 
 echo "Removing existing manifest file"
 rm -f "$COMMAND_MANIFEST_FILE"
@@ -8,7 +8,7 @@ echo "Creating a manifest file..."
 {{ for prop in NodeBuildProperties }}
 echo "{{ prop.Key }}={{ prop.Value }}" >> "$COMMAND_MANIFEST_FILE"
 {{ end }}
-echo "Node Command Manifest file created."
+echo "Node Build Command Manifest file created."
 {{ end }}
 {{ end }}
 
