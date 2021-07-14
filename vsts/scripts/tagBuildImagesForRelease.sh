@@ -53,6 +53,7 @@ tagBuildImage "oryxdevmcr.azurecr.io/public/oryx/build:azfunc-jamstack-buster-$B
 tagBuildImage "oryxdevmcr.azurecr.io/public/oryx/build:github-actions-$BUILD_DEFINITIONNAME.$RELEASE_TAG_NAME" "github-actions" "github-actions-$RELEASE_TAG_NAME"
 tagBuildImage "oryxdevmcr.azurecr.io/public/oryx/build:github-actions-buster-$BUILD_DEFINITIONNAME.$RELEASE_TAG_NAME" "github-actions-buster" "github-actions-buster-$RELEASE_TAG_NAME"
 tagBuildImage "oryxdevmcr.azurecr.io/public/oryx/build:vso-focal-$BUILD_DEFINITIONNAME.$RELEASE_TAG_NAME" "vso-focal" "vso-focal-$RELEASE_TAG_NAME"
+tagBuildImage "oryxdevmcr.azurecr.io/public/oryx/build:vso-focal-$BUILD_DEFINITIONNAME.$RELEASE_TAG_NAME" "vso-slim" "vso-slim-$RELEASE_TAG_NAME"
 
 echo "printing pme tags from $outPmeFileMCR"
 cat $outPmeFileMCR

@@ -19,5 +19,10 @@ namespace Microsoft.Oryx.BuildScriptGenerator
         /// Gets or sets a value of a directory where the build manifest file should be put into.
         /// </summary>
         public string ManifestDir { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value of the file where build commands will be written during build.
+        /// </summary>
+        public string BuildCommandsFile { get; set; }
     }
 }

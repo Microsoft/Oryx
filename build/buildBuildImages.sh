@@ -336,7 +336,7 @@ function buildVsoFocalImage() {
 
 	BuildAndTagStage "$BUILD_IMAGES_VSO_FOCAL_DOCKERFILE" intermediate
 	echo
-	echo "-------------Creating VSO Ubuntu <focal> build image-------------------"
+	echo "-------------Creating VSO full build image-------------------"
 	local builtImageName="$ACR_BUILD_VSO_FOCAL_IMAGE_NAME"
 	docker build -t $builtImageName \
 		--build-arg AI_KEY=$APPLICATION_INSIGHTS_INSTRUMENTATION_KEY \
@@ -357,17 +357,19 @@ function buildVsoFocalImage() {
 	echo "$builtImageName" >> $ACR_BUILD_IMAGES_ARTIFACTS_FILE
 }
 
-function buildVsoImage() {
-	buildFullImage
+function buildVsoSlimImage() {
+	buildBuildScriptGeneratorImage
+	buildGitHubRunnersUbuntuBaseImage
 
-	# NOTE: do not pass in label as it is inherited from base image
-	# Also do not pass in build-args as they are used in base image for creating environment variables which are in
-	# turn inherited by this image.
+	BuildAndTagStage "$BUILD_IMAGES_VSO_SLIM_DOCKERFILE" intermediate
 	echo
-	echo "-------------Creating VSO build image-------------------"
-	local builtImageName="$ACR_BUILD_VSO_IMAGE_NAME"
+	echo "-------------Creating VSO Slim build image-------------------"
+	local builtImageName="$ACR_BUILD_VSO_SLIM_IMAGE_NAME"
 	docker build -t $builtImageName \
-		-f "$BUILD_IMAGES_VSO_DOCKERFILE" \
+		--build-arg AI_KEY=$APPLICATION_INSIGHTS_INSTRUMENTATION_KEY \
+		--build-arg SDK_STORAGE_BASE_URL_VALUE=$PROD_SDK_CDN_STORAGE_BASE_URL \
+		--label com.microsoft.oryx="$labelContent" \
+		-f "$BUILD_IMAGES_VSO_SLIM_DOCKERFILE" \
 		.
 
 	createImageNameWithReleaseTag $builtImageName
@@ -376,7 +378,7 @@ function buildVsoImage() {
 	echo "$builtImageName image history"
 	docker history $builtImageName
 
-	docker tag $builtImageName "$DEVBOX_BUILD_IMAGES_REPO:vso"
+	docker tag $builtImageName "$DEVBOX_BUILD_IMAGES_REPO:vso-slim"
 
 	echo
 	echo "$builtImageName" >> $ACR_BUILD_IMAGES_ARTIFACTS_FILE
@@ -440,6 +442,7 @@ if [ -z "$imageTypeToBuild" ]; then
 	buildLtsVersionsImage "buster"
 	buildLtsVersionsImage	
 	buildFullImage
+	buildVsoSlimImage
 	buildVsoFocalImage
 	buildCliImage "buster"
 	buildCliImage
@@ -458,6 +461,8 @@ elif [ "$imageTypeToBuild" == "ltsversions-buster" ]; then
 	buildLtsVersionsImage "buster"
 elif [ "$imageTypeToBuild" == "full" ]; then
 	buildFullImage
+elif [ "$imageTypeToBuild" == "vso-slim" ]; then
+	buildVsoSlimImage
 elif [ "$imageTypeToBuild" == "vso-focal" ]; then
 	buildVsoFocalImage
 elif [ "$imageTypeToBuild" == "cli" ]; then

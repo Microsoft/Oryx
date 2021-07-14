@@ -99,6 +99,12 @@ RUN set -ex \
     && mkdir -p $nugetPackagesDir \
     # Grant read-write permissions to the nuget folder so that dotnet restore
     # can write into it.
+    && mkdir -p /home/codespace/.nodejs \
+    && mkdir -p /home/codespace/.python \
+    && mkdir -p /home/codespace/.php \
+    && mkdir -p /home/codespace/.ruby \
+    && mkdir -p /home/codespace/.java \
+    && mkdir -p /home/codespace/.maven \
     && chmod a+rw $nugetPackagesDir \
     && DOTNET_RUNNING_IN_CONTAINER=true \
     && DOTNET_USE_POLLING_FILE_WATCHER=true \
@@ -106,30 +112,19 @@ RUN set -ex \
     && DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 \
 	&& NUGET_PACKAGES="$nugetPackagesDir" \
     && . $buildDir/__dotNetCoreSdkVersions.sh \
-    && DOTNET_SDK_VER=$DOT_NET_CORE_21_SDK_VERSION \
-       INSTALL_PACKAGES="true" \
-       $imagesDir/build/installDotNetCore.sh \
     && DOTNET_SDK_VER=$DOT_NET_CORE_31_SDK_VERSION \
-       INSTALL_PACKAGES="true" \
-       $imagesDir/build/installDotNetCore.sh \
-    && DOTNET_SDK_VER=$DOT_NET_50_SDK_VERSION \
        INSTALL_PACKAGES="true" \
        $imagesDir/build/installDotNetCore.sh \
     && rm -rf /tmp/NuGetScratch \
     && find $nugetPackagesDir -type d -exec chmod 777 {} \; \
     && cd /opt/dotnet \
     && . $buildDir/__dotNetCoreSdkVersions.sh \
-    && ln -s $DOT_NET_CORE_21_SDK_VERSION 2-lts \
     && ln -s $DOT_NET_CORE_31_SDK_VERSION 3-lts \
     && ln -s 3-lts lts \
     # Install Hugo
-    && mkdir -p /home/codespace/.hugo \
     && $imagesDir/build/installHugo.sh \
     # Install Node
-    && mkdir -p /home/codespace/.nodejs \
     && . $buildDir/__nodeVersions.sh \
-    && $imagesDir/installPlatform.sh nodejs $NODE10_VERSION \
-    && $imagesDir/installPlatform.sh nodejs $NODE12_VERSION \
     && $imagesDir/installPlatform.sh nodejs $NODE14_VERSION \
     && $imagesDir/receiveGpgKeys.sh 6A010C5166006599AA17F08146C2130DFD2497F5 \
     && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
@@ -140,11 +135,9 @@ RUN set -ex \
     && mv /opt/yarn/yarn-v$YARN_VERSION /opt/yarn/$YARN_VERSION \
     && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
     && cd /opt/nodejs \
-    && ln -s $NODE10_VERSION 10 \
-    && ln -s $NODE12_VERSION 12 \
     && ln -s $NODE14_VERSION 14 \
     && ln -s 14 lts \
-    && ln -sfn /opt/nodejs/$NODE14_VERSION /home/codespace/.nodejs/current \
+    && ln -sfn /opt/$NODE14_VERSION /home/codespace/.nodejs/current \
     && cd /opt/yarn \
     && ln -s $YARN_VERSION stable \
     && ln -s $YARN_VERSION latest \
@@ -152,20 +145,13 @@ RUN set -ex \
     && ln -s $YARN_MINOR_VERSION $YARN_MAJOR_VERSION \
     # Install Python SDKs
     # Upgrade system python
-    && mkdir -p /home/codespace/.python \
     && pip install --upgrade cython \
     && pip3 install --upgrade cython \
     && . $buildDir/__pythonVersions.sh \
-    && $imagesDir/installPlatform.sh python $PYTHON36_VERSION \
-    && $imagesDir/installPlatform.sh python $PYTHON37_VERSION \
     && $imagesDir/installPlatform.sh python $PYTHON38_VERSION \
-    && [ -d "/opt/python/$PYTHON36_VERSION" ] && echo /opt/python/$PYTHON36_VERSION/lib >> /etc/ld.so.conf.d/python.conf \
-    && [ -d "/opt/python/$PYTHON37_VERSION" ] && echo /opt/python/$PYTHON37_VERSION/lib >> /etc/ld.so.conf.d/python.conf \
     && [ -d "/opt/python/$PYTHON38_VERSION" ] && echo /opt/python/$PYTHON38_VERSION/lib >> /etc/ld.so.conf.d/python.conf \
     && ldconfig \
     && cd /opt/python \
-    && ln -s $PYTHON36_VERSION 3.6 \
-    && ln -s $PYTHON37_VERSION 3.7 \
     && ln -s $PYTHON38_VERSION 3.8 \
     && ln -s $PYTHON38_VERSION latest \
     && ln -s $PYTHON38_VERSION stable \
@@ -173,15 +159,12 @@ RUN set -ex \
     && ln -sfn /opt/python/$PYTHON38_VERSION /home/codespace/.python/current \
     # Install PHP pre-reqs
     && $imagesDir/build/php/prereqs/installPrereqs.sh \
-    && mkdir -p /home/codespace/.php \
     # Copy PHP versions
     && . $buildDir/__phpVersions.sh \
-    && $imagesDir/installPlatform.sh php $PHP72_VERSION \
-    && $imagesDir/installPlatform.sh php $PHP73_VERSION \
     && $imagesDir/installPlatform.sh php $PHP74_VERSION \
     && $imagesDir/installPlatform.sh php-composer $COMPOSER_VERSION \
     && cd /opt/php \
-    && ln -s 7.3 7 \
+    && ln -s 7.4 7 \
     && ln -s 7 lts \
     && ln -sfn /opt/php/$PHP73_VERSION /home/codespace/.php/current \
     && cd /opt/php-composer \
@@ -204,8 +187,8 @@ ENV ORYX_PREFER_USER_INSTALLED_SDKS=true \
     ORIGINAL_PATH="$PATH" \
     PATH="$ORYX_PATHS:$PATH" \
     CONDA_SCRIPT="/opt/conda/etc/profile.d/conda.sh" \
-    RUBY_HOME="/opt/ruby/current" \
-    JAVA_HOME="/opt/java/current" \
+    RUBY_HOME="/opt/ruby/lts" \
+    JAVA_HOME="/opt/java/lts" \
     DYNAMIC_INSTALL_ROOT_DIR="/opt"
 
 # Now adding remaining of VSO platform features
@@ -236,14 +219,12 @@ RUN buildDir="/opt/tmp/build" \
     && cd $imagesDir/build/python/conda \
     && cp -rf * "$condaDir" \
     && cd $imagesDir \
-    && mkdir -p /home/codespace/.ruby \
     && . $buildDir/__rubyVersions.sh \
     && ./installPlatform.sh ruby $RUBY27_VERSION \
     && cd /opt/ruby \
     && ln -s $RUBY27_VERSION /opt/ruby/lts \
     && ln -sfn /opt/ruby/$RUBY27_VERSION /home/codespace/.ruby/current \
     && cd $imagesDir \
-    && mkdir -p /home/codespace/.java \
     && . $buildDir/__javaVersions.sh \
     && ./installPlatform.sh java $JAVA_VERSION \
     && ./installPlatform.sh maven $MAVEN_VERSION \
@@ -252,7 +233,6 @@ RUN buildDir="/opt/tmp/build" \
     && ln -sfn /opt/java/$JAVA_VERSION /home/codespace/.java/current \
     && cd /opt/maven \
     && ln -s $MAVEN_VERSION lts \
-    && mkdir -p /home/codespace/.maven/current \
     && ln -sfn /opt/maven/$MAVEN_VERSION /home/codespace/.maven/current \
     && npm install -g lerna \
     && pecl install -f libsodium \

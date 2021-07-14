@@ -63,6 +63,11 @@ namespace Microsoft.Oryx.BuildScriptGenerator
         public string ManifestDir { get; set; }
 
         /// <summary>
+        /// Gets or sets the file name where build commands will be dynamically written during build.
+        /// </summary>
+        public string BuildCommandsFileName { get; set; }
+
+        /// <summary>
         /// Gets or set the path to benv file.
         /// </summary>
         public string BenvPath { get; set; }

@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Microsoft.Oryx.BuildScriptGenerator.Python
 {
     /// <summary>
@@ -19,6 +21,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
             string compressVirtualEnvCommand,
             string compressedVirtualEnvFileName,
             bool runPythonPackageCommand,
+            string pythonVersion,
+            string pythonBuildCommandsFileName = null,
             string pythonPackageWheelProperty = null)
         {
             VirtualEnvironmentName = virtualEnvironmentName;
@@ -30,6 +34,8 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
             CompressedVirtualEnvFileName = compressedVirtualEnvFileName;
             RunPythonPackageCommand = runPythonPackageCommand;
             PythonPackageWheelProperty = pythonPackageWheelProperty;
+            PythonBuildCommandsFileName = pythonBuildCommandsFileName;
+            PythonVersion = pythonVersion;
         }
 
         public string VirtualEnvironmentName { get; set; }
@@ -50,6 +56,13 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Python
         public string CompressedVirtualEnvFileName { get; set; }
 
         public bool RunPythonPackageCommand { get; set; }
+
+        public string PythonVersion { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the python build commands file.
+        /// </summary>
+        public string PythonBuildCommandsFileName { get; set; }
 
         public string PythonPackageWheelProperty { get; set; }
     }

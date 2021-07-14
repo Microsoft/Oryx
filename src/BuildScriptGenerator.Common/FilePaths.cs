@@ -6,6 +6,7 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Common
     {
         public const string CompressedOutputFileName = "oryx_output.tar.gz";
         public const string BuildManifestFileName = "oryx-manifest.toml";
+        public const string BuildCommandsFileName = "oryx-build-commands.txt";
         public const string RunScriptGeneratorDir = "/opt/startupcmdgen";
         public const string NodeAppInsightsLoaderFileName = "applicationinsights/out/Bootstrap/Oryx.js";
         public const string NodeGlobalModulesPath = "/usr/local/lib/node_modules";

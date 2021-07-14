@@ -5,9 +5,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Oryx.BuildScriptGenerator.Common;
 using Microsoft.Oryx.BuildScriptGenerator.Exceptions;
 using Microsoft.Oryx.BuildScriptGenerator.SourceRepo;
 using Microsoft.Oryx.Common.Extensions;
@@ -154,10 +156,15 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
             }
 
             var manifestFileProperties = new Dictionary<string, string>();
+            var nodeCommandManifestFileProperties = new Dictionary<string, string>();
+            var nodeBuildcommandFileName = string.IsNullOrEmpty(ctx.BuildCommandsFile) ? FilePaths.BuildCommandsFileName : ctx.BuildCommandsFile;
+            var manifestDirPath = string.IsNullOrEmpty(ctx.ManifestDir) ? ctx.SourceRepo.RootPath : ctx.ManifestDir;
+            var nodeBuildCommandsFile = Path.Join(manifestDirPath, nodeBuildcommandFileName);
 
             // Write the platform name and version to the manifest file
             manifestFileProperties[ManifestFilePropertyKeys.NodeVersion] = nodePlatformDetectorResult.PlatformVersion;
-
+            manifestFileProperties[nameof(nodeBuildCommandsFile)] = nodeBuildCommandsFile;
+            nodeCommandManifestFileProperties["PlatformWithVersion"] = "nodejs " + nodePlatformDetectorResult.PlatformVersion;
             var packageJson = GetPackageJsonObject(ctx.SourceRepo, _logger);
             string runBuildCommand = null;
             string runBuildAzureCommand = null;
@@ -372,8 +379,9 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
                 LernaBootstrapCommand = NodeConstants.LernaBootstrapCommand,
                 InstallLageCommand = NodeConstants.InstallLageCommand,
                 LageRunBuildCommand = runBuildLageCommand,
+                NodeBuildProperties = nodeCommandManifestFileProperties,
+                NodeBuildCommandsFile = nodeBuildCommandsFile,
             };
-
             string script = TemplateHelper.Render(
                 TemplateHelper.TemplateResource.NodeBuildSnippet,
                 scriptProps,

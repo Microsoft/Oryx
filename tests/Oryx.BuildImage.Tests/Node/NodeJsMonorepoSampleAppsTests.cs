@@ -58,6 +58,49 @@ namespace Microsoft.Oryx.BuildImage.Tests
                 result.GetDebugInfo());
         }
 
+        [Theory]
+        [InlineData("monorepo-lerna-npm", true)]
+        [InlineData("monorepo-lerna-yarn", true)]
+        [InlineData("linxnodeexpress", false)]
+        public void BuildMonorepoApp_Prints_BuildCommands_In_File(string appName, bool isMonoRepo)
+        {
+            // Arrange
+            var volume = CreateSampleAppVolume(appName);
+            var appDir = volume.ContainerDir;
+            var appOutputDir = "/tmp/app1-output";
+            var commandListFile = $"{appOutputDir}/{FilePaths.BuildCommandsFileName}";
+            var script = new ShellScriptBuilder()
+                .SetEnvironmentVariable(
+                    SdkStorageConstants.SdkStorageBaseUrlKeyName,
+                    SdkStorageConstants.DevSdkStorageBaseUrl)
+                .SetEnvironmentVariable(
+                    SettingsKeys.EnableNodeMonorepoBuild,
+                    isMonoRepo.ToString())
+                .AddBuildCommand($"{appDir} -o {appOutputDir}")
+                .AddFileExistsCheck($"{commandListFile}")
+                .AddStringExistsInFileCheck("PlatformWithVersion=", $"{commandListFile}")
+                .AddStringExistsInFileCheck("BuildCommands=", $"{commandListFile}")
+                .ToString();
+
+            // Act
+            var result = _dockerCli.Run(new DockerRunArguments
+            {
+                ImageId = _imageHelper.GetVsoBuildImage("vso-focal"),
+                EnvironmentVariables = new List<EnvironmentVariable> { CreateAppNameEnvVar(appName) },
+                Volumes = new List<DockerVolume> { volume },
+                CommandToExecuteOnRun = "/bin/bash",
+                CommandArguments = new[] { "-c", script }
+            });
+
+            // Assert
+            RunAsserts(
+                () =>
+                {
+                    Assert.True(result.IsSuccess);
+                },
+                result.GetDebugInfo());
+        }
+
         [Fact]
         public void GeneratesScript_AndBuildMonorepoAppUsingLerna_Yarn()
         {

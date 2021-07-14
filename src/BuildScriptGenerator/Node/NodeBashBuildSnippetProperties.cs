@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Microsoft.Oryx.BuildScriptGenerator.Node
 {
     /// <summary>
@@ -59,5 +61,15 @@ namespace Microsoft.Oryx.BuildScriptGenerator.Node
         public string LageRunBuildCommand { get; set; }
 
         public string CustomBuildCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets a list of commands for the build.
+        /// </summary>
+        public IDictionary<string, string> NodeBuildProperties { get; set; }
+
+        /// <summary>
+        /// Gets or sets the build command file for nodejs.
+        /// </summary>
+        public string NodeBuildCommandsFile { get; set; }
     }
 }
