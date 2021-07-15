@@ -19,6 +19,12 @@ namespace Microsoft.Oryx.Detector.DotNetCore
         /// </example>
         public string ProjectFile { get; set; }
 
+        /// <summary>
+        /// Check if it needs to install AOT compilation before running 
+        /// "dotnet publish" or "dotnet build" when building the Blazor WebAssembly app.
+        /// </summary>
+        public bool InstallAOTWorkloads { get; set; }
+
         public string SdkVersion { get; set; }
     }
 }

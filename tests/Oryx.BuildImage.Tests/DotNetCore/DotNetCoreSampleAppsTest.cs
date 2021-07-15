@@ -311,6 +311,43 @@ namespace Microsoft.Oryx.BuildImage.Tests
                 result.GetDebugInfo());
         }
 
+        // This test is necessary once .NET 6 preview 5 come out.
+        [Fact(Skip = "Temporarily skip for issue https://github.com/dotnet/sdk/issues/17865")]
+        public void Builds_Net6BlazorWasmApp_RunsAOTCompilationInstallCommands()
+        {
+            // Arrange
+            var appName = "NetCore6BlazorWasmApp";
+            var volume = CreateSampleAppVolume(appName);
+            var appDir = volume.ContainerDir;
+            var appOutputDir = "/tmp/NetCore6BlazorWasmApp-output";
+            var script = new ShellScriptBuilder()
+                .AddDefaultTestEnvironmentVariables()
+                .AddBuildCommand(
+                $"{appDir} -o {appOutputDir} --platform dotnet " +
+                $"--platform-version 6")
+                .AddFileExistsCheck($"{appOutputDir}/{appName}.dll")
+                .ToString();
+
+            // Act
+            var result = _dockerCli.Run(new DockerRunArguments
+            {
+                ImageId = Settings.BuildImageName,
+                EnvironmentVariables = new List<EnvironmentVariable> { CreateAppNameEnvVar(appName) },
+                Volumes = new List<DockerVolume> { volume },
+                CommandToExecuteOnRun = "/bin/bash",
+                CommandArguments = new[] { "-c", script }
+            });
+
+            // Assert
+            RunAsserts(
+                () =>
+                {
+                    Assert.True(result.IsSuccess);
+                    Assert.Contains(string.Format(SdkVersionMessageFormat, "6.0.0-preview.4.21220.1"), result.StdOut);
+                },
+                result.GetDebugInfo());
+        }
+
         [Fact]
         public void Build_ExecutesPreAndPostBuildScripts_WithinBenvContext()
         {

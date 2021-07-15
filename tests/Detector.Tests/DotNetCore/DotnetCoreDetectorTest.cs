@@ -50,6 +50,36 @@ namespace Microsoft.Oryx.Detector.Tests.DotNetCore
         }
 
         [Theory]
+        [InlineData("net6.0", true)]
+        [InlineData("net5.0", false)]
+        public void Detect_ReturnsExpected_BlazorWebAssemblyApp_ProjectFileHaveTargetFrameworkSpecified(
+            string targetFrameworkName,
+            bool installAOTWorkloads)
+        {
+            // Arrange
+            var projectFile = "test.csproj";
+            var sourceRepo = new Mock<ISourceRepo>();
+            sourceRepo
+                .Setup(repo => repo.EnumerateFiles(It.IsAny<string>(), It.IsAny<bool>()))
+                .Returns(new[] { projectFile });
+            sourceRepo
+                .Setup(repo => repo.ReadFile(It.IsAny<string>()))
+                .Returns(SampleProjectFileContents.ProjectFileAzureBlazorWasmClientWithTargetFrameworkPlaceHolder
+                .Replace(
+                    "#TargetFramework#",
+                    targetFrameworkName));
+            var context = CreateContext(sourceRepo.Object);
+            var detector = CreateDetector(projectFile);
+
+            // Act
+            var result = (DotNetCorePlatformDetectorResult) detector.Detect(context);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(installAOTWorkloads, result.InstallAOTWorkloads);
+        }
+
+        [Theory]
         [InlineData("netcoreapp2.1", "2.1")]
         [InlineData("net5.0", "5.0")]
         public void Detect_ReturnsVersionPartOfTargetFramework(

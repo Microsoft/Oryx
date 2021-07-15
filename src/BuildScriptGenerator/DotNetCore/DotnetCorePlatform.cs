@@ -127,10 +127,17 @@ namespace Microsoft.Oryx.BuildScriptGenerator.DotNetCore
                 return null;
             }
 
+            string installBlazorWebAssemblyAOTWorkloadCommand = null;
+            if (dotNetCorePlatformDetectorResult.InstallAOTWorkloads)
+            {
+                installBlazorWebAssemblyAOTWorkloadCommand = DotNetCoreConstants.InstallBlazorWebAssemblyAOTWorkloadCommand;
+            }
+
             var templateProperties = new DotNetCoreBashBuildSnippetProperties
             {
                 ProjectFile = projectFile,
                 Configuration = GetBuildConfiguration(),
+                InstallBlazorWebAssemblyAOTWorkloadCommand = installBlazorWebAssemblyAOTWorkloadCommand,
             };
 
             var script = TemplateHelper.Render(
