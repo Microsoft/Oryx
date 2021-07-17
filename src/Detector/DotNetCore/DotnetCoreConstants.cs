@@ -18,6 +18,7 @@ namespace Microsoft.Oryx.Detector.DotNetCore
         public const string ProjectSdkElementNameAttributeValueXPathExpression = "string(/Project/Sdk/@Name)";
         public const string TargetFrameworkElementXPathExpression = "/Project/PropertyGroup/TargetFramework";
         public const string AssemblyNameXPathExpression = "/Project/PropertyGroup/AssemblyName";
+        public const string OutputTypeElementXPathExpression = "/Project/PropertyGroup/OutputType";
         public const string PackageReferenceXPathExpression = "/Project/ItemGroup/PackageReference";
 
         public const string ProjectBuildPropertyKey = "project";
